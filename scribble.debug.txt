@@ -39,7 +39,7 @@ var elemental_items=[
   ],
 ]
 var special_weapons=["bardiche","blade",
-"heavy hammer","repeater","arm"]
+"heavy_hammer","repeater","arm"]
 var for_melee_single_target=[
   "sword","hammer",
 ]
@@ -65,7 +65,7 @@ var unmaking_threshold=600
 var debuff_bosses="always"
 var debuff_non_bosses="smite"
 var useable_abilities=["dash","bash",
-"skeleton_arm","mask","blade","hammer",
+"skeleton_arm","mask","blade","heavy_hammer",
 "fire_talisman","bardiche","quarterstaff",
 ]
 var hammer_frames=14
@@ -134,7 +134,7 @@ func progress()
   :?ll=fungus_forest_boss
     return fight_mushrooms()
   :?ll=mushroom&is(fi,"epic_snail")
-    return dr("hammer")&
+    return dr("heavy_hammer")&
     ^dr("bash")&auto_melee_miniboss()
   :?ll=undead_crypt_boss
     return fight_pallas()
@@ -151,7 +151,7 @@ func progress()
         ^do_stunlock.Contains("ice elemental")
           dr("mask")
           dr("blade")
-          dr("hammer")
+          dr("heavy_hammer")
           return stunlock()
         :
         return auto_melee_miniboss()
@@ -234,7 +234,7 @@ func evade_at(t)
     ?ft>(t-bardiche_frames)
       dr("bardiche")
     ?ft>(t-hammer_frames)
-      dr("hammer")
+      dr("heavy_hammer")
   return false
 func soft_block()
   trace("soft_block")
@@ -325,7 +325,7 @@ func fight_xyloalgia()
       maybe_drink()
     ?stunlock_poena
       dr("mask")
-      dr("hammer")
+      dr("heavy_hammer")
       dr("blade")
       dr("bardiche")
     ?fs=32&
@@ -609,7 +609,7 @@ var can_stunlock=do_stunlock.Count()>0&
 func check_stunlock()
   ?can_stunlock&fi!"cool_bat"&
   ^do_stunlock.Contains("ceiling decorator")
-    dr("hammer")
+    dr("heavy_hammer")
 func stunlock()
   trace("stunlock")
   dr("skeleton_arm")
@@ -619,7 +619,7 @@ func stunlock()
     return maybe_drink()&melee("dps")
   var stunned=foe_debuff("stun")
   ?(can_hammer()&fd<=17)|
-  ^is(lock,"hammer")
+  ^is(lock,"heavy_hammer")
     return hammer()
   :?(stunned>bardiche_frames+10)&
   ^should_bard()|is(lock,"bardiche")
@@ -986,21 +986,21 @@ func smite_at_exact()
     return smite()
   return false
 func can_hammer()
-  return cu("hammer")&!phys_immune&
+  return cu("heavy_hammer")&!phys_immune&
   ^fd<=21&ca()
 func should_hammer()
   ?!can_hammer()
     return false
-  return is(lock,"hammer")|
+  return is(lock,"heavy_hammer")|
   ^(ib|can_aoe&fd<15)
   ^&(fa>0|ff=spawner|
   ^can_debuff()&
   ^!(ff=immune_to_stun))
 func hammer()
-  trace("hammer")
-  set_lock("hammer",hammer_frames)
-  equip_L("heavy hammer")
-  return use("hammer")
+  trace("heavy_hammer")
+  set_lock("heavy_hammer",hammer_frames)
+  equip_L("heavy_hammer")
+  return use("heavy_hammer")
 func can_bard()
   return cu("bardiche")&
   ^fd<=9&!phys_immune&
@@ -1100,7 +1100,7 @@ func aac(weapon)
 var elem_types=["sword","big sword","wand",
 "shield","crossbow","staff","hammer"]
 var all_2h_types=["bardiche","arm","blade",
-"heavy hammer","repeating","staff",
+"heavy_hammer","repeating","staff",
 "quarterstaff","shovel","crossbow"]
 var ranged_2h_types=["repeating","crossbow",
 "staff"]
@@ -1122,8 +1122,8 @@ func _prepare_items()
   ^[for_melee_aoe,aa_aoe_types]]
     var source=a[0]
     var dest=a[1]
-    ?source.Contains("heavy hammer")
-      dest.Add("heavy hammer")
+    ?source.Contains("heavy_hammer")
+      dest.Add("heavy_hammer")
     ?source.Contains("hammer")
       dest.Add("hammer")
     for w:source
@@ -1284,7 +1284,7 @@ func get_foe_weak_elem()
   foe_elem="default"
   return "default"
 var all_abilities=[
-  "mind","hammer","bardiche","blade",
+  "mind","heavy_hammer","bardiche","blade",
   "skeleton_arm","mask","fire_talisman",
   "cinderwisp","quarterstaff","dash","bash",
 ]
@@ -1336,7 +1336,7 @@ func is(s1,s2)
   return string.Equals(s1,s2)
 var weapon_ranges=["sword",5,"hammer",5,
 "quarterstaff",5,"big sword",6,"arm",6,
-"heavy hammer",7,"bardiche",9,"staff",10,
+"heavy_hammer",7,"bardiche",9,"staff",10,
 "blade",11,"wand",20,"heavy crossbow",22,
 "repeating",22,"crossbow",22]
 var melee_range=5

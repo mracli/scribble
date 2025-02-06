@@ -55,7 +55,7 @@ var elemental_items = [
 /* These non-elemental items can be used as
 weapon types in the lists below. */
 var special_weapons = ["bardiche", "blade",
-"heavy hammer", "repeater", "arm"]
+"heavy_hammer", "repeater", "arm"]
 
 /* Weapon type priority for single targets:
 1. First type + foe's weak element.
@@ -150,7 +150,7 @@ won't be used. Supported: dash, bash,
 bardiche, hammer, blade, skeleton_arm, mask,
 quarterstaff, fire_talisman, cinderwisp. */
 var useable_abilities = ["dash", "bash", 
-"skeleton_arm", "mask", "blade", "hammer", 
+"skeleton_arm", "mask", "blade", "heavy_hammer", 
 "fire_talisman", "bardiche", "quarterstaff",
 // "cinderwisp" // will spend your fire runes
 ]
@@ -310,7 +310,7 @@ func progress()
     return fight_mushrooms()
   
   :?loc = mushroom & is(foe.id, "epic_snail")
-    return disable_r("hammer") & 
+    return disable_r("heavy_hammer") & 
     ^disable_r("bash") & auto_melee_miniboss()
 
   :?loc = undead_crypt_boss
@@ -331,7 +331,7 @@ func progress()
         ^do_stunlock.Contains("ice elemental")
           disable_r("mask")
           disable_r("blade")
-          disable_r("hammer")
+          disable_r("heavy_hammer")
           return stunlock()
         :
         return auto_melee_miniboss()
@@ -429,7 +429,7 @@ func evade_at(t)
     ?foe.time > (t - bardiche_frames)
       disable_r("bardiche")
     ?foe.time > (t - hammer_frames)
-      disable_r("hammer")
+      disable_r("heavy_hammer")
   return false
 
 func soft_block()
@@ -532,7 +532,7 @@ func fight_xyloalgia()
     ?stunlock_poena
       // save abilities for poena
       disable_r("mask")
-      disable_r("hammer")
+      disable_r("heavy_hammer")
       disable_r("blade")
       disable_r("bardiche")
     
@@ -875,7 +875,7 @@ func check_stunlock()
   ?can_stunlock & foe.id ! "cool_bat" & 
   ^do_stunlock.Contains("ceiling decorator")
     // save the stun for the bat
-    disable_r("hammer")
+    disable_r("heavy_hammer")
 
 func stunlock()
   trace("stunlock")
@@ -888,7 +888,7 @@ func stunlock()
   it's safe */
   var stunned = foe_debuff("stun")
   ?(can_hammer() & foe.distance <= 17) |
-  ^is(lock, "hammer")
+  ^is(lock, "heavy_hammer")
     return hammer() // long stun
   :?(stunned > bardiche_frames + 10) &
   ^should_bard() | is(lock, "bardiche")
@@ -1318,23 +1318,23 @@ func smite_at_exact()
   return false
 
 func can_hammer()
-  return can_use("hammer") & !phys_immune & 
+  return can_use("heavy_hammer") & !phys_immune & 
   ^foe.distance <= 21 & can_activate()
 
 func should_hammer()
   ?!can_hammer()
     return false
-  return is(lock, "hammer") | 
+  return is(lock, "heavy_hammer") | 
   ^(is_boss | can_aoe & foe.distance<15)
   ^& (foe.armor > 0 | foe = spawner | 
   ^can_debuff() & 
   ^!(foe = immune_to_stun))
 
 func hammer()
-  trace("hammer")
-  set_lock("hammer", hammer_frames)
-  equip_L("heavy hammer")
-  return use("hammer")
+  trace("heavy_hammer")
+  set_lock("heavy_hammer", hammer_frames)
+  equip_L("heavy_hammer")
+  return use("heavy_hammer")
 
 func can_bard()
   return can_use("bardiche") & 
@@ -1458,7 +1458,7 @@ func aac(weapon)
 var elem_types = ["sword", "big sword", "wand",
 "shield", "crossbow", "staff", "hammer"]
 var all_2h_types = ["bardiche", "arm", "blade",
-"heavy hammer", "repeating", "staff",
+"heavy_hammer", "repeating", "staff",
 "quarterstaff", "shovel", "crossbow"]
 var ranged_2h_types = ["repeating", "crossbow",
 "staff"]
@@ -1490,8 +1490,8 @@ func _prepare_items()
   ^[for_melee_aoe, aa_aoe_types]]
     var source = a[0]
     var dest = a[1]
-    ?source.Contains("heavy hammer")
-      dest.Add("heavy hammer")
+    ?source.Contains("heavy_hammer")
+      dest.Add("heavy_hammer")
     ?source.Contains("hammer")
       dest.Add("hammer")
     for w : source
@@ -1677,7 +1677,7 @@ func get_foe_weak_elem()
   return "default"
 
 var all_abilities = [
-  "mind", "hammer", "bardiche", "blade",
+  "mind", "heavy_hammer", "bardiche", "blade",
   "skeleton_arm", "mask", "fire_talisman",
   "cinderwisp", "quarterstaff", "dash", "bash",
 ]
@@ -1736,7 +1736,7 @@ func is(s1, s2)
 
 var weapon_ranges = ["sword", 5, "hammer", 5,
 "quarterstaff", 5, "big sword", 6, "arm", 6, 
-"heavy hammer", 7, "bardiche", 9, "staff", 10,
+"heavy_hammer", 7, "bardiche", 9, "staff", 10,
 "blade", 11, "wand", 20, "heavy crossbow", 22,
 "repeating", 22, "crossbow", 22]
 var melee_range = 5
