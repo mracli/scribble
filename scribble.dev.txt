@@ -1276,7 +1276,10 @@ func backflip()
 func can_slap()
   return can_use("skeleton_arm") & 
   ^!(foe.id = "ice_pillar") &
-  ^foe.distance < 7 & !phys_immune &
+  ^foe.distance < 7 &
+  // arm ability can't be activated when too close
+  ^foe.distance > 3 & 
+  ^!phys_immune &
   ^can_activate()
 
 func should_slap()
