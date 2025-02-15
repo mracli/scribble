@@ -14,48 +14,54 @@ whole elements and weapon types if you don't
 want the script to use them. */
 var elemental_items = [
   ["hammer",
-    ["aether", "D",],
-    ["poison", "D+8", "D+7"],
-    ["ice", "D"],
+    ["ice", "dI"],
+    ["aether", "dU +4", "dU +3",],
     ["default",
-     "stone hammer +7", "aether hammer D"],
+     "stone hammer", "aether hammer dU +7", 
+     "aether hammer dU +1", ],
   ],
   ["wand",
-    ["vigor", "D+8", "D+7"],
-    ["default", 
-    "vigor wand D+8", "vigor wand D+7"],
+    ["fire", "dF *10 +5"],
+    ["vigor", "dL +5", "dL +4"],
+    ["default",
+    "vigor wand dL +7", "vigor wand dL +4", 
+    "fire wand dF *10 +5", ],
   ],
-  ["staff", 
-    ["aether", "dU"]
+  ["staff",
+    ["aether", "du +6"],
+    ["default", "aether staff du +4"]
   ],
   ["crossbow",
+    ["fire",   "dF"],
+    // ["ice",   "dI"],
+    ["aether", "D *5 +1"],
     ["poison", "dP"],
-    ["fire", "dF"],
-    ["ice", "dI"],
+    ["default",
+     "aether crossbow D *5 +1", "poison crossbow dP", ],
   ],
   ["sword",
-    ["aether", "dU+9","dU+8"],
-    ["fire", "D+7", "dF"],
-    ["ice", "dI"],
-    ["poison", "dP", "D"],
-    ["vigor", "D", "dL+10", "dL+9"],
-    ["default", 
-     "aether sword dU+9", "aether sword dU+8",
-     "vigor sword dL", "poison sword D"],
+    ["ice",    "D *9 +5",  "D *9 +4", "dI *7 +4", ],
+    ["poison", "D *8 +8",  "D *7 +4", "dP *8 +7"],
+    ["vigor",  "D *9 +11", "dL +8",   "dL +7", ],
+    ["aether", "D *7 +5",  "D *7 +3", "dU *6 +5"],
+    ["fire",   "D *8 +4",  "D *7 +3", "dF *5 +2"],
+    ["default",
+     "vigor sword D *9 +11", "ice sword D *9 +5", 
+     "ice sword D *9 +4", "poison sword D *8 +6", 
+     ],
   ],
   ["shield",
-    ["vigor", "A"],
-    ["poison", "A"],
-    ["ice", "A"],
-    ["aether", "A"],
-    ["fire", "A"],
+    ["vigor",   "A"],
+    ["poison",  "A"],
+    ["ice",     "A"],
+    ["aether",  "A"],
+    ["fire",    "A"],
     ["default", "compound"],
   ],
 ]
 /* These non-elemental items can be used as
 weapon types in the lists below. */
-var special_weapons = ["bardiche", "blade",
-"heavy_hammer", "repeater", "arm"]
+var special_weapons = ["bardiche", "repeater", "arm"]
 
 /* Weapon type priority for single targets:
 1. First type + foe's weak element.
@@ -79,7 +85,12 @@ var aoe_threshold = 4
 
 /* Weapons to use for melee AoE, same priority
 logic as the regular melee. */
-var for_melee_aoe = ["arm"]
+var for_melee_aoe = [
+  // "sword", 
+  "heavy_hammer",
+  "bardiche",
+  "arm",
+]
 
 /* If this is set to `true`, script will prefer
 to use ranged items from lists below instead of
@@ -94,12 +105,16 @@ var prefer_ranged_foes = []
 /* Will exclusively use single-target ranged
 against these enemies */
 var must_ranged_foes = ["wasp", "wasp nest",
-"mosquito", "huge mosquito"]
+"mosquito", "huge mosquito", 
+// "ant", "snail", 
+// "bat", "scorpion", "spider", "slave_master",
+// "mine", "skeleton", "tomb"
+]
 
 /* Used for scripted bosses, for `ranged_foes`,
 or when `prefer_ranged` is true. */
-var for_ranged_single_target = ["crossbow", 
-"repeating","wand", ]
+var for_ranged_single_target = ["repeating","crossbow", 
+"wand", ]
 
 /* Enable this _only_ if you have 10* repeating
 crossbow without attack speed enchant.
@@ -108,7 +123,7 @@ var enable_repeating_aac = true
 
 /* Weapons to use for ranged AoE. Ranged AoE is
 triggered by the same threshold as melee AoE.*/
-var for_ranged_aoe = ["wand", "staff"]
+var for_ranged_aoe = ["wand", "staff", "crossbow"]
 
 /* Weapons to use against `immune_to_physical`
 enemies. */
@@ -117,18 +132,19 @@ var for_phys_immune = ["wand", "staff"]
 /* Full name of the shield with the highest
 evade%, will be used to block big boss attacks
 */
-var evade_shield = "vigor shield ah"
+var evade_shield = "poison shield +6"
 
 /* Script will try to stunlock these enemies
 instead of using any other tactics. Supported:
 poena, ceiling decorator, ice elemental. */
 var do_stunlock = [
-  "poena", "ceiling decorator", "ice elemental"
+  "poena", "ceiling decorator", "ice elemental",
+  ""
 ]
 
 // Full names of weapons to use for stunlocking
 var stunlock_weapons = [
-  "aether hammer D", "stone hammer +7"]
+  "ice hammer dI", "stone hammer"]
 
 /* How much HP a non-boss enemy must have 
 to use dU weapons on it instead of other 
@@ -151,8 +167,12 @@ bardiche, hammer, blade, skeleton_arm, mask,
 quarterstaff, fire_talisman, cinderwisp. */
 var useable_abilities = ["dash", "bash", 
 "skeleton_arm", "mask", "blade", "heavy_hammer", 
-"fire_talisman", "bardiche", "quarterstaff",
+"bardiche", "quarterstaff", "fire_talisman", 
 // "cinderwisp" // will spend your fire runes
+]
+
+var useable_hidden_abilities = [
+  // "wand_fire",
 ]
 
 /* Advanced: these are default values, change 
@@ -167,7 +187,7 @@ non-boss's HP is lower than twice this damage*/
 var bardiche_dmg = 52 * (7.6 + 2)
 
 /* Use scripted potions for bosses. */
-var use_potions_for_bosses = true
+var use_potions_for_bosses = false
 
 /* Drink crit/speed potion right at the start
 of phase1 of these boss fights. Overrides 
@@ -197,17 +217,18 @@ var max_chill_stacks = 6
 /* When to use Cinder ability (if listed in
 `useable_abilities`). Will use at max_stacks,
 or if boss's HP is lower than stacks * dmg. */
-var max_ignition_stacks = 10
-var cinderwisp_dmg = 24
+var max_ignition_stacks = 12
+var cinderwisp_dmg = 20
 
 /* At least this many enemies must be present
 to use Smite ability. */
 var smite_threshold = 7
 
 // Depends on level/enchants of your BFG.
-var smite_damage = 85
+var smite_damage = 130
 
-// Enable smiting two screens at once
+// Enable smiting two screens at once,
+// this will affect bfg quest
 var long_long_smite = true
 
 /* If you're doing the "kill unique
@@ -219,11 +240,11 @@ var bfg_defeated_foes = []
 /* Set to true if you're doing Skeleton Arm
 quests. Prioritizes last-hitting foes with the 
 Arm ability */
-var pickpocket_quest = false
+var pickpocket_quest = true
 
 // These depend on level/enchants of the Arm
-var arm_damage = 44
-var max_pickpocket_stacks = 3
+var arm_damage = 20
+var max_pickpocket_stacks = 1
 
 /* Cultist Mask quests.
 "simple" - steps 1 and 3 (uses on CD)
@@ -343,7 +364,8 @@ func progress()
   ^is(foe.id, "acronian_cultist")
     trace("miniboss")
     excluded_items = "vigor"
-    return auto_melee_miniboss()
+    return stunlock()
+    // return auto_melee_miniboss()
 
   :?loc = nagaraja
     return fight_nagaraja()
@@ -1322,7 +1344,7 @@ func smite_at_exact()
 
 func can_hammer()
   return can_use("heavy_hammer") & !phys_immune & 
-  ^foe.distance <= 21 & can_activate()
+  ^foe.distance <= 25 & can_activate()
 
 func should_hammer()
   ?!can_hammer()
@@ -1692,6 +1714,20 @@ var all_abilities = [
   "mind", "heavy_hammer", "bardiche", "blade",
   "skeleton_arm", "mask", "fire_talisman",
   "cinderwisp", "quarterstaff", "dash", "bash",
+  "voidweaver",
+  /* hidden wand/staff ability */
+  "wand_aether",   //Calamity Wand	
+  "wand_fire",     //Explosive Wand	
+  "wand_ice",      //Frost Wand	
+  "wand_poison",   //Plague Wand	
+  "wand_vigor",    //Reset Wand	
+  "wand_stone",    //Gravity Wand	
+  "staff_aether",  //Grasping Staff	
+  "staff_fire",    //Infernal Staff	
+  "staff_ice",     //Eternity Staff	
+  "staff_poison",  //Berserker Staff	
+  "staff_vigor",   //Prevention Staff	
+  "staff_stone",   //Acrobatic Staff	
 ]
 var move_r = ["quarterstaff", "bash", "dash"]
 var cooldowns = ["mind", 0]
@@ -1868,20 +1904,22 @@ func draw_ui()
           r = "arm"
         :?is(r, "cinderwisp")
           r = "cinder"
-        >`@x@,@y@,#@colorize(cd)@,
+        :?is(r, "heavy_hammer")
+          r = "hammer"
+        >`@x@,@y@,#@colorize(cd, r)@,
         ^@string.Capitalize(r)@
         ^ @time.FormatDigital(cd)@
         y++
     >`@x@,@y@,
-    ^#@colorize(get_cd("quarterstaff"))@,QS
+    ^#@colorize(get_cd("quarterstaff"), "quarterstaff")@,QS
     ?abilities.Contains("bash")
       >`@x+2@,@y@,@gray@,/
       >`@x+3@,@y@,
-      ^#@colorize(get_cd("bash"))@,B
+      ^#@colorize(get_cd("bash"), "bash")@,B
     ?abilities.Contains("dash")
       >`@x+4@,@y@,@gray@,/
       >`@x+5@,@y@,
-      ^#@colorize(get_cd("dash"))@,D
+      ^#@colorize(get_cd("dash"), "dash")@,D
   ?ui_show_debug
     x = 1
     y = 15
@@ -1905,7 +1943,7 @@ func draw_ui()
       info = info + frame_time
     :
       info = info + frame_time.Div(
-    ^frame_times.Count()).ToString()
+      ^frame_times.Count()).ToString()
     ?lock
       info = info + ", L: " + lock + 
       ^" (" + lock_timer + ")"
@@ -1944,9 +1982,11 @@ func draw_ui()
         ey++
     // %end_dev%
 
-func colorize(cd)
-  ?cd > 0
+func colorize(cd, ability)
+  ?!abilities[abilities.IndexOf(ability) + 1]
     return "red"
+  ?cd > 0
+    return "yellow"
   return "green"
 
 // %start_dev%
