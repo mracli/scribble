@@ -1455,6 +1455,14 @@ func aac(weapon)
   equip @weapon@
   return weapon
 
+func _AAC()
+  ?item.left.state = 3
+    equipL wand 0* // trash
+    equipL @item.left@
+  ?item.right.state = 3
+    equipR shield 0* // trash
+    equip @item.right@
+
 /*********************
 **     #Internals   **
 *********************/
@@ -1811,6 +1819,7 @@ func prelude()
   _update_my_effects()
   _update_abilities()
   _update_lock()
+  _AAC()
 
 func panic(e)
   >`20,5,#red,@e@
