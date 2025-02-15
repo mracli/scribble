@@ -1357,7 +1357,8 @@ func bardiche()
 
 func can_mask()
   return can_use("mask") &
-  ^(foe ! nagaraja) & can_activate()
+  ^(foe ! nagaraja) & can_activate() &
+  ^ foe ! immune_to_ranged
 
 func should_mask()
   return can_mask() & (is(mask_quest,"simple")|
@@ -1899,7 +1900,11 @@ func draw_ui()
     var frame_time = math.BigNumber(0)
     for ft:frame_times
       frame_time = frame_time.Add(ft)
-    var info = "ms: " + frame_time.Div(
+    var info = "ms: "
+    ?frame_times.Count() = 0
+      info = info + frame_time
+    :
+      info = info + frame_time.Div(
     ^frame_times.Count()).ToString()
     ?lock
       info = info + ", L: " + lock + 
