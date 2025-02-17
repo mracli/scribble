@@ -258,7 +258,9 @@ func progress()
     // pick resources from the ground
     return equip_L("star") & equip_R("trisk")
 
-  ?long_long_smite & smite_two_screens()
+  ?long_long_smite & 
+  ^item.CanActivate() &
+  ^smite_two_screens()
     return true
   
   ?healwalk()
