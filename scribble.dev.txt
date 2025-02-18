@@ -40,14 +40,14 @@ var elemental_items = [
      "aether crossbow D *5 +1", "poison crossbow dP", ],
   ],
   ["sword",
-    ["ice",    "D *9 +5",  "D *9 +4", "dI *7 +4", ],
-    ["poison", "D *8 +8",  "D *7 +4", "dP *8 +7"],
-    ["vigor",  "D *9 +11", "dL +8",   "dL +7", ],
-    ["aether", "D *7 +5",  "D *7 +3", "dU *6 +5"],
-    ["fire",   "D *8 +4",  "D *7 +3", "dF *5 +2"],
+    ["ice",    "D +11",  "D *9 +9", "dI *8 +6", ],
+    ["poison", "D shiny",  "D -shiny", "dP *8 +7"],
+    ["vigor",  "D +11", "dL +11",   "dL +7", ],
+    ["aether", "D *8 +6",  "D *8 +3", "dU *6 +5"],
+    ["fire",   "D *8 +6",  "D *9 +3", "dF *5 +2"],
     ["default",
-     "vigor sword D *9 +11", "ice sword D *9 +5", 
-     "ice sword D *9 +4", "poison sword D *8 +6", 
+     "poison sword D *9 +16", "vigor sword D +11", 
+     "ice sword D +11", "ice sword D *9 +4", 
      ],
   ],
   ["shield",
@@ -279,7 +279,9 @@ func progress()
     // pick resources from the ground
     return equip_L("star") & equip_R("trisk")
 
-  ?long_long_smite & smite_two_screens()
+  ?long_long_smite & 
+  ^item.CanActivate() &
+  ^smite_two_screens()
     return true
   
   ?healwalk()
@@ -567,6 +569,10 @@ func fight_xyloalgia()
     ?unsummon()
       return
     excluded_items = "dU"
+    // disable_r("mask")
+    disable_r("heavy_hammer")
+    // disable_r("blade")
+    disable_r("bardiche")
     ?stunlock_poena
       stunlock()
 
@@ -1924,6 +1930,8 @@ func draw_ui()
     x = 1
     y = 15
     ?foe
+      ?encounter.isElite
+        >`@x@,@y-1@,@gray@,emod: @encounter.eliteMod@
       ?string.Size(foe.buffs.string) > 0
         >`@x@,@y@,@gray@,@foe.buffs.string@
       >`@x@,@y+1@,@gray@,id: @foe.id@
