@@ -14,11 +14,12 @@ whole elements and weapon types if you don't
 want the script to use them. */
 var elemental_items = [
   ["hammer",
-    ["ice", "dI"],
+    ["ice", "D"],
     ["aether", "dU +4", "dU +3",],
+    ["fire", "D"],
     ["default",
-     "stone hammer", "aether hammer dU +7", 
-     "aether hammer dU +1", ],
+     "ice hammer D", "fire hammer D", 
+     "aether hammer dU +7", "aether hammer dU +1", ],
   ],
   ["wand",
     ["fire", "dF *10 +5"],
@@ -28,26 +29,26 @@ var elemental_items = [
     "fire wand dF *10 +5", ],
   ],
   ["staff",
-    ["aether", "du +6"],
-    ["default", "aether staff du +4"]
+    ["aether", "aU"],
+    ["default", "aether staff aU"]
   ],
   ["crossbow",
     ["fire",   "dF"],
     // ["ice",   "dI"],
-    ["aether", "D *5 +1"],
+    ["aether", "dU"],
     ["poison", "dP"],
     ["default",
-     "aether crossbow D *5 +1", "poison crossbow dP", ],
+     "aether crossbow dU", "poison crossbow dP", ],
   ],
   ["sword",
-    ["ice",    "D +11",  "D *9 +9", "dI *8 +6", ],
-    ["poison", "D shiny",  "D -shiny", "dP *8 +7"],
-    ["vigor",  "D +11", "dL +11",   "dL +7", ],
-    ["aether", "D *8 +6",  "D *8 +3", "dU *6 +5"],
-    ["fire",   "D *8 +6",  "D *9 +3", "dF *5 +2"],
+    ["ice",    "D +11",  "D +11", "dI", ],
+    ["poison", "D shiny",  "D -shiny", "dP"],
+    ["vigor",  "D +11", "dL +13",   "dL +11", ],
+    ["aether", "D +10",  "D +9", "dU"],
+    ["fire",   "D *9 +6",  "D *8 +6", "dF"],
     ["default",
-     "poison sword D *9 +16", "vigor sword D +11", 
-     "ice sword D +11", "ice sword D *9 +4", 
+     "poison sword D shiny", "vigor sword D +11", 
+     "ice sword D +11", "ice sword D +11", 
      ],
   ],
   ["shield",
@@ -132,7 +133,7 @@ var for_phys_immune = ["wand", "staff"]
 /* Full name of the shield with the highest
 evade%, will be used to block big boss attacks
 */
-var evade_shield = "poison shield +6"
+var evade_shield = "poison shield"
 
 /* Script will try to stunlock these enemies
 instead of using any other tactics. Supported:
@@ -144,7 +145,7 @@ var do_stunlock = [
 
 // Full names of weapons to use for stunlocking
 var stunlock_weapons = [
-  "ice hammer dI", "stone hammer"]
+  "ice hammer D", "fire hammer D"]
 
 /* How much HP a non-boss enemy must have 
 to use dU weapons on it instead of other 
@@ -187,7 +188,7 @@ non-boss's HP is lower than twice this damage*/
 var bardiche_dmg = 52 * (7.6 + 2)
 
 /* Use scripted potions for bosses. */
-var use_potions_for_bosses = false
+var use_potions_for_bosses = true
 
 /* Drink crit/speed potion right at the start
 of phase1 of these boss fights. Overrides 
@@ -225,7 +226,7 @@ to use Smite ability. */
 var smite_threshold = 7
 
 // Depends on level/enchants of your BFG.
-var smite_damage = 130
+var smite_damage = 170
 
 // Enable smiting two screens at once,
 // this will affect bfg quest
@@ -570,12 +571,11 @@ func fight_xyloalgia()
       return
     excluded_items = "dU"
     // disable_r("mask")
-    disable_r("heavy_hammer")
+    // disable_r("heavy_hammer")
     // disable_r("blade")
-    disable_r("bardiche")
+    // disable_r("bardiche")
     ?stunlock_poena
       stunlock()
-
     // no stunlocking, avoid hitting the mirror
     :?(disable_debuffs & foe.hp>(foe.maxhp/4))|
     ^(foe.state = 32 & foe.time = 41)
@@ -2044,10 +2044,31 @@ func reset_loop()
   last_state = 0
   dysan_step = -1
 
+/* --------------- moondialing -------------- */
+// Codes from github address: https://github.com/asHOH/StoneScript-for-Stone-Story-RPG
+// Turn on only when the swords in both hands are +21 atk speed enchantment
+var moondial_time = 0
+var enable_moondialing = false
+func moondialing()
+  ?!(item.left = "sword" & item.right = "sword")
+    return false
+  ?moondial_time % 3 = 0
+    equipR @item.left@
+    equipL moon_stone
+  :?moondial_time % 3 = 1
+    equipR @item.right@
+    equipL moon_stone
+  :
+    equipR @item.right@
+    equipL @item.left@
+  moondial_time++
+  return true
+
 // %start_dev%
 var start_t = 0
 var frame_times = []
 var index = 0
+var enable_dialog = false
 start_t = time.msbn
 // %end_dev%
 ?loc.begin
@@ -2061,6 +2082,10 @@ start_t = time.msbn
     brew_pot()
   :?item.potion = empty
     brew tar + bronze // vampiric
+  ?enable_dialog
+    enable npcDialog
+  :
+    disable npcDialog
 :?loc.loop
   ?use_potions_for_bosses
     brew_pot()
@@ -2068,6 +2093,9 @@ start_t = time.msbn
 prelude()
 ?ai.enabled & !ai.paused
   progress()
+  ?enable_moondialing
+    trace("moondialing")
+    moondialing()
 :
   healwalk()
 draw_ui()
